@@ -60,6 +60,7 @@ storage:
           ujust setup-usbguard
           ujust set-kargs-hardening
           ujust toggle-bash-environment-lockdown
+          ujust toggle-container-domain-userns-creation
           ujust audit-secureblue
       mode: 0755
 systemd:
