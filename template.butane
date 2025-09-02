@@ -54,6 +54,14 @@ storage:
       append:
       - inline: |
           /opt/run_install_secureblue.sh
+    - path: /var/home/core/post_installation.sh
+      contents:
+      - inline: |
+          ujust setup-usbguard
+          ujust set-kargs-hardening
+          ujust toggle-bash-environment-lockdown
+          ujust audit-secureblue
+      mode: 0755
 systemd:
   units:
     - name: bootloader-update.service
