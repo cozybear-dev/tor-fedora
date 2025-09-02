@@ -10,6 +10,19 @@ passwd:
         - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIDbXa6BWHM2avjHZlCzPfnYt/5we+WsdgN9asF9FS9DRAAAABHNzaDo=
 storage:
   files:
+    - path: /etc/zincati/config.d/55-updates-strategy.toml
+      contents:
+        inline: |
+          [updates]
+          strategy = "periodic"
+
+          [updates.periodic]
+          time_zone = "Europe/Amsterdam"
+
+          [[updates.periodic.window]]
+          days = [ "Sat", "Sun" ]
+          start_time = "19:00"
+          length_minutes = 120
     - path: /opt/install_secureblue.sh
       contents:
         source: https://raw.githubusercontent.com/secureblue/secureblue/refs/heads/live/files/system/usr/share/secureblue/install_secureblue.sh
@@ -41,19 +54,6 @@ storage:
       append:
       - inline: |
           /opt/run_install_secureblue.sh
-    - path: /etc/zincati/config.d/55-updates-strategy.toml
-      contents:
-        inline: |
-          [updates]
-          strategy = "periodic"
-
-          [updates.periodic]
-          time_zone = "Europe/Amsterdam"
-
-          [[updates.periodic.window]]
-          days = [ "Sat", "Sun" ]
-          start_time = "19:00"
-          length_minutes = 120
 systemd:
   units:
     - name: bootloader-update.service
