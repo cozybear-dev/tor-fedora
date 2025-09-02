@@ -19,7 +19,7 @@ jobs:
         run: |
           # Fetch the latest release version from GitHub API
           LATEST_VERSION=$(curl -s https://api.github.com/repos/coreos/butane/releases/latest | grep tag_name | cut -d '"' -f 4)
-          curl -sSL https://github.com/coreos/butane/releases/download/${LATEST_VERSION}/butane-x86_64-linux -o butane
+          curl -sSL https://github.com/coreos/butane/releases/download/${LATEST_VERSION}/butane-x86_64-unknown-linux-gnu -o butane
           chmod +x butane
           sudo mv butane /usr/local/bin/
 
