@@ -9,4 +9,11 @@ sudo coreos-installer install /dev/vda \
     --ignition-url https://github.com/cozybear-dev/tor-fedora/releases/download/commit-fe2048fb53e1ce22962d408643f8edf1c6192312/template.ign
 
 sudo curl -s https://pastebin.com/raw/ | sudo bash
+
+
+Seperate container (core user pass hash);
+docker run -ti --rm quay.io/coreos/mkpasswd --method=yescrypt
+
+In container (grub pass hash);
+grub-mkpasswd-pbkdf2
 ```

@@ -1,5 +1,9 @@
 variant: fcos
 version: 1.6.0
+grub:
+  users:
+    - name: root
+      password_hash: grub.pbkdf2.sha512.10000.3117DECCDFE84F275645D9D64AD24563DC68E400E83684F2BE242A179183AF7A09D8772B245B5EE9A846B4BE4AEFF9CF04155352526558A6EE7D56F6891CC094.32A3B6082AB86CE5453761DCB47B776A1EB837484037E977A7D0EE21CD9FA61C17290578508904413F06C65B564BA540C8C20D535CB812FA495A87061FD02728 # 'testing'
 passwd:
   users:
     - name: core
@@ -54,14 +58,69 @@ storage:
       append:
       - inline: |
           /opt/run_install_secureblue.sh
-    - path: /var/home/core/post_installation.sh
+    - path: /opt/secureblue_post_install.sh
       contents:
-      - inline: |
+        inline: |
+          #!/bin/bash
+          set -e
+
+          # Enroll SecureBoot key if not already enrolled
+          if ! mokutil --sb-state | grep -q "SecureBoot enabled"; then
+            echo "Enrolling secureblue SecureBoot key..."
+            ujust enroll-secureblue-secure-boot-key
+          else
+            echo "SecureBoot key already enrolled."
+          fi
+
+          # Setup USBGuard
+          echo "Setting up USBGuard..."
           ujust setup-usbguard
+
+          # Setup kernel hardening
+          echo "Setting up kernel hardening..."
           ujust set-kargs-hardening
+
+          # Enable bash environment lockdown
+          echo "Enabling bash environment lockdown..."
           ujust toggle-bash-environment-lockdown
+
+          # Enable containers
+          echo "Setting up container permissions..."
           ujust toggle-container-domain-userns-creation
+
+          # Create admin user with wheel group
+          echo "Creating admin user..."
+          if ! id -u admin &>/dev/null; then
+            adduser admin
+            usermod -aG wheel admin
+            echo "Please enter the password for the admin user:"
+            read -s admin_password
+            echo "admin:$admin_password" | chpasswd
+            unset admin_password
+          else
+            echo "Admin user already exists."
+          fi
+
+          # Validate secureblue setup
+          echo "Running secureblue audit..."
           ujust audit-secureblue
+
+          # Note: Removing wheel privileges from primary user requires user interaction
+          echo "To remove wheel privileges from your primary user, log in as 'admin' and run:"
+          echo "  run0 gpasswd -d <your-username> wheel"
+          echo "Then reboot the system."
+
+          # Note: DNS configuration requires user interaction
+          echo "To configure system DNS, run manually:"
+          echo "  ujust dns-selector"
+
+          # Note: LUKS FIDO2 or TPM2 unlock setup requires user interaction
+          echo "To set up LUKS FIDO2 unlock, run manually:"
+          echo "  ujust setup-luks-fido2-unlock"
+          echo "To set up LUKS TPM2 unlock (if not using fTPM on AMD), run manually:"
+          echo "  ujust setup-luks-tpm-unlock"
+
+          echo "Post-install setup complete. Review manual steps above."
       mode: 0755
 systemd:
   units:
