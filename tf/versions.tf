@@ -13,8 +13,8 @@ terraform {
             version = ">= 3.7.1"
         }
         ct = {
-            source  = "poseidon/ct"
-            version = "0.13.0"
+            source  = "cozybear-dev/ct"
+            version = ">= 0.15.0"
         }
     }
     required_version = ">= 1.11.3"

@@ -93,6 +93,8 @@ data "ct_config" "tor_fedora" {
 
 # new: confidential compute instance in EU with Shielded VM features and example user-data
 resource "google_compute_instance" "confidential_instance" {
+  count = 0
+
   name         = "${local.project_name}-confidential-vm"
   project      = google_project.tor_fedora.project_id
   zone         = "europe-west1-b"
@@ -110,11 +112,6 @@ resource "google_compute_instance" "confidential_instance" {
     # use default network; replace with specific network/subnetwork if needed
     network = "default"
     access_config {}
-  }
-
-  // Confidential VM enablement
-  confidential_instance_config {
-    enable_confidential_compute = true
   }
 
   // Shielded VM features for secure-boot, vTPM and integrity monitoring

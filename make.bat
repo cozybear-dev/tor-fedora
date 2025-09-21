@@ -35,7 +35,7 @@ goto :EOF
 
 :runImage
     echo Running Docker container...
-    docker run -it -v "%USERPROFILE%\AppData\Roaming\gcloud:/root/.config/gcloud:rw" --env-file ./.env -v "%CD%:/workdir" --workdir=/workdir/tf tf-tor-fedora:latest
+    docker run -it -v "%USERPROFILE%\AppData\Roaming\gcloud:/root/.config/gcloud:rw" -v plugin-cache:/root/.terraform/plugins --env-file ./.env -v "%CD%:/workdir" --workdir=/workdir/tf tf-tor-fedora:latest
     goto :EOF
 
 :main

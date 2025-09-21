@@ -80,10 +80,6 @@ storage:
           echo "Setting up kernel hardening..."
           ujust set-kargs-hardening
 
-          # Enable bash environment lockdown
-          echo "Enabling bash environment lockdown..."
-          ujust toggle-bash-environment-lockdown
-
           # Enable containers
           echo "Setting up container permissions..."
           ujust toggle-container-domain-userns-creation
@@ -91,12 +87,11 @@ storage:
           # Create admin user with wheel group
           echo "Creating admin user..."
           if ! id -u admin &>/dev/null; then
+            run0
             adduser admin
             usermod -aG wheel admin
             echo "Please enter the password for the admin user:"
-            read -s admin_password
-            echo "admin:$admin_password" | chpasswd
-            unset admin_password
+            passwd admin
           else
             echo "Admin user already exists."
           fi
@@ -113,6 +108,10 @@ storage:
           # Note: DNS configuration requires user interaction
           echo "To configure system DNS, run manually:"
           echo "  ujust dns-selector"
+
+          # Note: Enable bash environment lockdown
+          echo "To enable bash environment lockdown (only do this one completely setup):"
+          echo "  ujust toggle-bash-environment-lockdown"
 
           # Note: LUKS FIDO2 or TPM2 unlock setup requires user interaction
           echo "To set up LUKS FIDO2 unlock, run manually:"

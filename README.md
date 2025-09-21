@@ -16,4 +16,7 @@ docker run -ti --rm quay.io/coreos/mkpasswd --method=yescrypt
 
 In container (grub pass hash);
 grub-mkpasswd-pbkdf2
+
+Butane config validation;
+docker run --rm  -v ./template.butane:/template.butane -i quay.io/coreos/butane:latest /template.butane
 ```
